@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Prelim Grade Calculator</title>
+  <style>
+    /* Modern, professional design with gradient background */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(180deg, #2c3e50, #ecf0f1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 10px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      width: 750px;
+      max-width: 90%;
+      padding: 30px;
+      animation: slideDown 0.8s ease-out;
+    }
+    @keyframes slideDown {
+      from { transform: translateY(-30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    h1 {
+      text-align: center;
+      color: #34495e;
+      margin-bottom: 20px;
+    }
+    .mode-selector {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+    .mode-selector label {
+      margin: 0 20px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      color: #34495e;
+    }
+    .input-group {
+      margin: 15px 0;
+      display: flex;
+      align-items: center;
+      transition: all 0.5s ease;
+    }
+    .input-group label {
+      flex: 1;
+      font-size: 16px;
+      color: #2c3e50;
+    }
+    .input-group input[type="number"] {
+      flex: 0 0 120px;
+      padding: 7px;
+      border: 1px solid #bdc3c7;
+      border-radius: 4px;
+      transition: border-color 0.3s ease;
+    }
+    .input-group input[type="number"]:focus {
+      border-color: #2980b9;
+      outline: none;
+    }
+    button, .custom-file-upload {
+      display: inline-block;
+      margin: 15px auto;
+      padding: 12px 25px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #fff;
+      background: #27ae60;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.3s ease;
+      text-align: center;
+    }
+    button:hover, .custom-file-upload:hover {
+      background: #2ecc71;
+      transform: scale(1.05);
+    }
+    /* Hide native file input */
+    input[type="file"] {
+      display: none;
+    }
+    .form-section {
+      animation: fadeIn 0.5s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .result {
+      background: #ecf0f1;
+      padding: 15px;
+      border-radius: 5px;
+      font-family: monospace;
+      white-space: pre-line;
+      margin-top: 20px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .result.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Prelim Grade Calculator</h1>
+    <div class="mode-selector">
+      <!-- Radio buttons to choose mode -->
+      <label>
+        <input type="radio" name="mode" value="lecture" checked> Lecture
+      </label>
+      <label>
+        <input type="radio" name="mode" value="laboratory"> Laboratory
+      </label>
+    </div>
+    <!-- Lecture mode input form -->
+    <div id="lecture-form" class="form-section">
+      <div class="input-group">
+        <label for="lecExam">Prelim Exam Score:</label>
+        <input type="number" id="lecExam" step="any">
+      </div>
+      <div class="input-group">
+        <label for="essay">Essay Score:</label>
+        <input type="number" id="essay" step="any">
+      </div>
+      <div class="input-group">
+        <label for="pvm">PVM Score:</label>
+        <input type="number" id="pvm" step="any">
+      </div>
+      <div class="input-group">
+        <label for="javaBasics">Java Basics Score:</label>
+        <input type="number" id="javaBasics" step="any">
+      </div>
+      <div class="input-group">
+        <label for="introJS">Intro to JS Score:</label>
+        <input type="number" id="introJS" step="any">
+      </div>
+      <div class="input-group">
+        <label for="lecAbsences">Number of Absences:</label>
+        <input type="number" id="lecAbsences">
+      </div>
+      <!-- File upload control for CSV in Lecture mode -->
+      <div style="text-align:center;">
+        <label for="csvFileLecture" class="custom-file-upload">Load CSV for Lecture</label>
+        <input type="file" id="csvFileLecture" accept=".csv">
+      </div>
+      <!-- Clear button for Lecture mode -->
+      <div style="text-align:center;">
+        <button id="clearLectureBtn">Clear</button>
+      </div>
+    </div>
+    <!-- Laboratory mode input form (initially hidden) -->
+    <div id="laboratory-form" class="form-section" style="display:none;">
+      <div class="input-group">
+        <label for="labJava1">Java 1 Score:</label>
+        <input type="number" id="labJava1" step="any">
+      </div>
+      <div class="input-group">
+        <label for="labJava2">Java 2 Score:</label>
+        <input type="number" id="labJava2" step="any">
+      </div>
+      <div class="input-group">
+        <label for="labJS1">JS 1 Score:</label>
+        <input type="number" id="labJS1" step="any">
+      </div>
+      <div class="input-group">
+        <label for="labJS2">JS 2 Score:</label>
+        <input type="number" id="labJS2" step="any">
+      </div>
+      <div class="input-group">
+        <label for="labWork">Lab Work Score:</label>
+        <input type="number" id="labWork" step="any">
+      </div>
+      <div class="input-group">
+        <label for="labAbsences">Number of Absences:</label>
+        <input type="number" id="labAbsences">
+      </div>
+      <!-- File upload control for CSV in Laboratory mode -->
+      <div style="text-align:center;">
+        <label for="csvFileLaboratory" class="custom-file-upload">Load CSV for Laboratory</label>
+        <input type="file" id="csvFileLaboratory" accept=".csv">
+      </div>
+      <!-- Clear button for Laboratory mode -->
+      <div style="text-align:center;">
+        <button id="clearLaboratoryBtn">Clear</button>
+      </div>
+    </div>
+    <!-- Calculate button -->
+    <div style="text-align:center;">
+      <button id="calculateBtn">Calculate Grade</button>
+    </div>
+    <!-- Area to display results -->
+    <div id="result" class="result"></div>
+  </div>
+
+  <script>
+    // References to form sections and result display.
+    const lectureForm = document.getElementById("lecture-form");
+    const laboratoryForm = document.getElementById("laboratory-form");
+    const modeRadios = document.getElementsByName("mode");
+    const resultDiv = document.getElementById("result");
+
+    // Toggle forms when mode changes with fade animation.
+    modeRadios.forEach(radio => {
+      radio.addEventListener("change", function() {
+        if (this.value === "lecture") {
+          laboratoryForm.style.display = "none";
+          lectureForm.style.display = "block";
+        } else {
+          lectureForm.style.display = "none";
+          laboratoryForm.style.display = "block";
+        }
+        resultDiv.textContent = "";
+        resultDiv.classList.remove("show");
+      });
+    });
+
+    // Calculate button event listener.
+    document.getElementById("calculateBtn").addEventListener("click", function() {
+      const selectedMode = document.querySelector('input[name="mode"]:checked').value;
+      if (selectedMode === "lecture") {
+        calculateLectureGrade();
+      } else {
+        calculateLaboratoryGrade();
+      }
+    });
+
+    // Clear buttons event listeners.
+    document.getElementById("clearLectureBtn").addEventListener("click", clearLectureFields);
+    document.getElementById("clearLaboratoryBtn").addEventListener("click", clearLaboratoryFields);
+
+    /**
+     * Calculates Lecture prelim grade from manual inputs and displays a detailed breakdown.
+     */
+    function calculateLectureGrade() {
+      const exam = parseFloat(document.getElementById("lecExam").value) || 0;
+      const essay = parseFloat(document.getElementById("essay").value) || 0;
+      const pvm = parseFloat(document.getElementById("pvm").value) || 0;
+      const javaBasics = parseFloat(document.getElementById("javaBasics").value) || 0;
+      const introJS = parseFloat(document.getElementById("introJS").value) || 0;
+      const absences = parseInt(document.getElementById("lecAbsences").value) || 0;
+
+      const prelimQuizzes = (essay + pvm + javaBasics + introJS) / 4;
+      const attendance = Math.max(0, 100 - (10 * absences));
+      const classStanding = 0.6 * prelimQuizzes + 0.4 * attendance;
+      const prelimGrade = 0.6 * exam + 0.4 * classStanding;
+
+      let resultText = "=== Lecture Prelim Grade Calculation ===\n";
+      resultText += `Exam: ${exam.toFixed(2)}\n`;
+      resultText += `Essay: ${essay.toFixed(2)}, PVM: ${pvm.toFixed(2)}, Java Basics: ${javaBasics.toFixed(2)}, IntroJS: ${introJS.toFixed(2)}\n`;
+      resultText += `Quizzes (avg): ${prelimQuizzes.toFixed(2)}\n`;
+      resultText += `Attendance: ${attendance.toFixed(2)} (after ${absences} absence(s))\n`;
+      resultText += `Class Standing: ${classStanding.toFixed(2)}\n`;
+      resultText += `Final Grade: ${prelimGrade.toFixed(2)}\n\n`;
+      resultText += "Summary: " + generateSummary(prelimGrade);
+      displayResult(resultText);
+    }
+
+    /**
+     * Calculates Laboratory prelim grade from manual inputs and displays a detailed breakdown.
+     */
+    function calculateLaboratoryGrade() {
+      const java1 = parseFloat(document.getElementById("labJava1").value) || 0;
+      const java2 = parseFloat(document.getElementById("labJava2").value) || 0;
+      const js1 = parseFloat(document.getElementById("labJS1").value) || 0;
+      const js2 = parseFloat(document.getElementById("labJS2").value) || 0;
+      const labWork = parseFloat(document.getElementById("labWork").value) || 0;
+      const absences = parseInt(document.getElementById("labAbsences").value) || 0;
+
+      const attendance = Math.max(0, 100 - (10 * absences));
+      const prelimExam = 0.2 * java1 + 0.3 * java2 + 0.2 * js1 + 0.3 * js2;
+      const classStanding = 0.6 * labWork + 0.4 * attendance;
+      const prelimGrade = 0.6 * prelimExam + 0.4 * classStanding;
+
+      let resultText = "=== Laboratory Prelim Grade Calculation ===\n";
+      resultText += `Java1: ${java1.toFixed(2)}, Java2: ${java2.toFixed(2)}, JS1: ${js1.toFixed(2)}, JS2: ${js2.toFixed(2)}\n`;
+      resultText += `Prelim Exam (weighted): ${prelimExam.toFixed(2)}\n`;
+      resultText += `Lab Work: ${labWork.toFixed(2)}\n`;
+      resultText += `Attendance: ${attendance.toFixed(2)} (after ${absences} absence(s))\n`;
+      resultText += `Class Standing: ${classStanding.toFixed(2)}\n`;
+      resultText += `Final Grade: ${prelimGrade.toFixed(2)}\n\n`;
+      resultText += "Summary: " + generateSummary(prelimGrade);
+      displayResult(resultText);
+    }
+
+    /**
+     * Generates a summary message based on the final grade.
+     */
+    function generateSummary(grade) {
+      if (grade >= 75) {
+        return "Excellent work! You are passing comfortably.";
+      } else if (grade >= 60) {
+        return "Borderline performance. Consider improving exam scores and attendance.";
+      } else {
+        return "Below passing threshold. Significant improvement needed.";
+      }
+    }
+
+    /**
+     * Displays the result with a fade-in effect.
+     */
+    function displayResult(text) {
+      resultDiv.textContent = text;
+      resultDiv.classList.remove("show");
+      void resultDiv.offsetWidth;
+      resultDiv.classList.add("show");
+    }
+
+    // CSV file parsing for Lecture mode using FileReader API.
+    document.getElementById("csvFileLecture").addEventListener("change", function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const results = processLectureCSV(evt.target.result);
+          let output = "=== Lecture CSV Results ===\n";
+          results.forEach((line, index) => {
+            output += `Row ${index + 1}: ${line}\n`;
+          });
+          displayResult(output);
+        };
+        reader.readAsText(file);
+      }
+    });
+
+    /**
+     * Parses CSV content for Lecture mode.
+     * Expected header: Exam,Essay,PVM,JavaBasics,IntroJS,Absences
+     */
+    function processLectureCSV(csvText) {
+      const lines = csvText.split(/\r?\n/).filter(l => l.trim() !== "");
+      const results = [];
+      // Skip header
+      for (let i = 1; i < lines.length; i++) {
+        const tokens = lines[i].split(",");
+        if (tokens.length < 6) continue;
+        const exam = parseFloat(tokens[0]) || 0;
+        const essay = parseFloat(tokens[1]) || 0;
+        const pvm = parseFloat(tokens[2]) || 0;
+        const javaBasics = parseFloat(tokens[3]) || 0;
+        const introJS = parseFloat(tokens[4]) || 0;
+        const absences = parseInt(tokens[5]) || 0;
+        const prelimQuizzes = (essay + pvm + javaBasics + introJS) / 4;
+        const attendance = Math.max(0, 100 - (10 * absences));
+        const classStanding = 0.6 * prelimQuizzes + 0.4 * attendance;
+        const prelimGrade = 0.6 * exam + 0.4 * classStanding;
+        const summary = generateSummary(prelimGrade);
+        results.push(`Grade: ${prelimGrade.toFixed(2)}, ${summary}`);
+      }
+      return results;
+    }
+
+    // CSV file parsing for Laboratory mode using FileReader API.
+    document.getElementById("csvFileLaboratory").addEventListener("change", function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const results = processLaboratoryCSV(evt.target.result);
+          let output = "=== Laboratory CSV Results ===\n";
+          results.forEach((line, index) => {
+            output += `Row ${index + 1}: ${line}\n`;
+          });
+          displayResult(output);
+        };
+        reader.readAsText(file);
+      }
+    });
+
+    /**
+     * Parses CSV content for Laboratory mode.
+     * Expected header: Java1,Java2,JS1,JS2,LabWork,Absences
+     */
+    function processLaboratoryCSV(csvText) {
+      const lines = csvText.split(/\r?\n/).filter(l => l.trim() !== "");
+      const results = [];
+      // Skip header
+      for (let i = 1; i < lines.length; i++) {
+        const tokens = lines[i].split(",");
+        if (tokens.length < 6) continue;
+        const java1 = parseFloat(tokens[0]) || 0;
+        const java2 = parseFloat(tokens[1]) || 0;
+        const js1 = parseFloat(tokens[2]) || 0;
+        const js2 = parseFloat(tokens[3]) || 0;
+        const labWork = parseFloat(tokens[4]) || 0;
+        const absences = parseInt(tokens[5]) || 0;
+        const attendance = Math.max(0, 100 - (10 * absences));
+        const prelimExam = 0.2 * java1 + 0.3 * java2 + 0.2 * js1 + 0.3 * js2;
+        const classStanding = 0.6 * labWork + 0.4 * attendance;
+        const prelimGrade = 0.6 * prelimExam + 0.4 * classStanding;
+        const summary = generateSummary(prelimGrade);
+        results.push(`Grade: ${prelimGrade.toFixed(2)}, ${summary}`);
+      }
+      return results;
+    }
+
+    /**
+     * Clears all input fields and result area in Lecture mode.
+     */
+    function clearLectureFields() {
+      document.getElementById("lecExam").value = "";
+      document.getElementById("essay").value = "";
+      document.getElementById("pvm").value = "";
+      document.getElementById("javaBasics").value = "";
+      document.getElementById("introJS").value = "";
+      document.getElementById("lecAbsences").value = "";
+      document.getElementById("csvFileLecture").value = "";
+      resultDiv.textContent = "";
+      resultDiv.classList.remove("show");
+    }
+
+    /**
+     * Clears all input fields and result area in Laboratory mode.
+     */
+    function clearLaboratoryFields() {
+      document.getElementById("labJava1").value = "";
+      document.getElementById("labJava2").value = "";
+      document.getElementById("labJS1").value = "";
+      document.getElementById("labJS2").value = "";
+      document.getElementById("labWork").value = "";
+      document.getElementById("labAbsences").value = "";
+      document.getElementById("csvFileLaboratory").value = "";
+      resultDiv.textContent = "";
+      resultDiv.classList.remove("show");
+    }
+  </script>
+</body>
+</html>
